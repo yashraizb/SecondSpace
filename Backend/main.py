@@ -5,6 +5,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
+import time
 
 # Flask constructor takes the name of
 # current module (__name__) as argument.
@@ -17,21 +18,41 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # the associated function.
 
 
+def find_unit(size):
+    unit_list = ["bytes", "KB", "MB", "GB", "TB"]
+    unit_index = 0
+    while(size > 1023):
+        size /= 1024
+        unit_index += 1
+        if unit_index == 4:
+            break
+    return "{} {}".format(size, unit_list[unit_index])
+
+
 def create_dir_structure(dir_structure, path):
     try:
         for file_obj in os.listdir(path):
             full_file_path = "{}/{}".format(path, file_obj)
+            details = os.stat(full_file_path)
+            size = find_unit(details.st_size)
+            last_modified = time.ctime(details.st_mtime)
             if os.path.isdir(full_file_path):
                 dir_structure[file_obj] = {
-                    "location": full_file_path,
+                    "location": full_file_path[14:],
                     "is_file": False,
-                    "folder_content": {}
+                    "folder_content": {},
+                    "size": size,
+                    "last_modified": last_modified,
+                    "file_name": file_obj
                 }
                 create_dir_structure(dir_structure[file_obj]["folder_content"], full_file_path)
             else:
                 dir_structure[file_obj] = {
-                    "location": full_file_path,
-                    "is_file": True
+                    "location": full_file_path[14:],
+                    "is_file": True,
+                    "size": size,
+                    "last_modified": last_modified,
+                    "file_name": file_obj
                 }
     except Exception as e:
         # print(e)
@@ -79,7 +100,7 @@ def check_user():
         Path(path).mkdir(exist_ok=True, parents=True)
         create_dir_structure(dir_structure, path)
         
-        # print(json.dumps(dir_structure, indent=4))
+        print(json.dumps(dir_structure, indent=4))
 
         return {
             "status": "SUCCESS",

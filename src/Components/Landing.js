@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FileTable from "./FileTable";
-// export const directoryStructure = {}
 
-export default function Landing(props) {
+export default function Landing() {
   const [user_no, setUserNo] = useState("");
   const [dirStructure, setDirStruc] = useState({});
   const [errMsg, setErrMsg] = useState("");
   const [apiStatus, setApiStattus] = useState("");
 
-  const backend_url = "http://192.168.29.172:8080";
 
   const handleClick = () => {
     // console.log("user_no : " + user_no)
@@ -24,9 +22,10 @@ export default function Landing(props) {
     })
       .then((res) => {
         res.json().then((data) => {
-          console.log(data);
+          // console.log(data);
           setApiStattus(data.status);
           if (data.status === "SUCCESS") {
+            setDirStruc({});
             setDirStruc(data.dir_structure);
           } else {
             setErrMsg(data.message);
@@ -41,6 +40,12 @@ export default function Landing(props) {
     setUserNo(nameValue);
     console.log("No value is : " + nameValue);
   };
+
+  // const handleUploadClick = {event} => {
+
+  // }
+
+  
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function Landing(props) {
           GO
         </button>
       </div>
-
+      
       {Object.keys(dirStructure).length === 0 ? (
         apiStatus !== "SUCCESS" ? (
           apiStatus === "" ? (
@@ -72,8 +77,10 @@ export default function Landing(props) {
       ) : apiStatus !== "SUCCESS" ? (
         <div className="container mt-4 bg-danger p-2" align="center" style={{color: "white"}}>{errMsg}</div>
       ) : (
-        <FileTable data={dirStructure} />
+        
+        <FileTable data={dirStructure} homeDirectory={user_no}/>
       )}
+
     </>
   );
 }

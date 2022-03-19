@@ -1,17 +1,16 @@
 // import { useState } from 'react';
-import './App.css';
+import "./App.css";
 // import FileTable from './Components/FileTable';
-import Landing from './Components/Landing';
+import Landing from "./Components/Landing";
 import Navbar from "./Components/Navbar";
-
+// Light gallery
 function App() {
-
-
   return (
     <>
-    <Navbar title="Second Space" homeLink="Home"/>
-    <Landing/>
-    {/* <FileTable/> */}
+      <div id="pageHolder">
+        <Navbar title="Second Space" homeLink="Home" />
+        <Landing />
+      </div>
     </>
   );
 }
