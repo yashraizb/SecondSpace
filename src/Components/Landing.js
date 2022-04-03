@@ -9,9 +9,6 @@ export default function Landing() {
 
 
   const handleClick = () => {
-    // console.log("user_no : " + user_no)
-    // document.getElementById("landing").classList.toggle("visually-hidden");
-    // document.getElementById("tableDiv").classList.toggle("visually-hidden");
     fetch("/checkUser", {
       method: "POST",
       headers: {
@@ -39,13 +36,7 @@ export default function Landing() {
     let nameValue = event.target.value;
     setUserNo(nameValue);
     console.log("No value is : " + nameValue);
-  };
-
-  // const handleUploadClick = {event} => {
-
-  // }
-
-  
+  };  
 
   return (
     <>

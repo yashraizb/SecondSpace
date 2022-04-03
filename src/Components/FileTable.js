@@ -115,9 +115,6 @@ export default function FileTable(props) {
           <CreateFolderModal handleModalOpen={handleModalOpen} handleModalClose={handleModalClose}/>
         </div>
       </div>
-      <div className="container mt-4 bg-light" id="tableHeadDiv">
-        <TableHead columns={listOfColumns} />
-      </div>
       <div className="container pt-3">
         <MyBreadCrumb
           path={objectPathArray}
@@ -125,6 +122,10 @@ export default function FileTable(props) {
           breadCrumbClick={handleBreadCrumbClick}
         />
       </div>
+      <div className="container mt-4 bg-light" id="tableHeadDiv">
+        <TableHead columns={listOfColumns} />
+      </div>
+      
       <div className="container mt-2 border rounded" id="rowDiv">
         {rowData.map((element, index) => {
           return (

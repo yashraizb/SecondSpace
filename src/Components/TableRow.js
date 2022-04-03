@@ -12,7 +12,7 @@ export default function TableRow(props) {
           <div key={element} className="border-bottom border-info">
               {(index === 0) ? (
                 (props.isFile) ? (
-                    <a key={index} onClick={props.handleRowClick} objectpath={objectPath} >{element}</a>
+                    <a key={index} objectpath={objectPath} >{element}</a>
                 ) : (
                     <a href="#" key={index} onClick={props.handleRowClick} objectpath={objectPath}>{element}</a>
                 )
