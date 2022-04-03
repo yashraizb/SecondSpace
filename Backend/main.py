@@ -1,18 +1,22 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
+from logging import exception
 import os
 from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
 import time
-
+import traceback
 # Flask constructor takes the name of
 # current module (__name__) as argument.
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+class CustomException(Exception):
+    def __init__(self, msg):
+        self.msg = msg
 # The route() function of the Flask class is a decorator,
 # which tells the application which URL should call
 # the associated function.
@@ -58,6 +62,19 @@ def create_dir_structure(dir_structure, path):
         # print(e)
         raise e
 
+def validate_request_body(request_body):
+    try:
+        if type(request_body["folder_name"]) != str:
+            raise CustomException("Invalid DataType for folder_name, should be a string")
+        if len(request_body["folder_name"].strip()) == 0:
+            raise CustomException("Invalid Value provided for folder_name")
+        if type(request_body["location"]) != str:
+            raise CustomException("Invalid DataType for location, should be a string")
+        if len(request_body["location"].strip()) == 0:
+            raise CustomException("Invalid Value provided for location")
+    except CustomException as e:
+        e.msg = "Error Occured in validate request body: {}".format(e.msg)
+        raise e
 
 @app.route('/')
 def health_check():
@@ -97,7 +114,7 @@ def check_user():
                 "dir_structure": {1: 2}
             }, 500
         
-        Path(path).mkdir(exist_ok=True, parents=True)
+        # Path(path).mkdir(exist_ok=True, parents=True)
         create_dir_structure(dir_structure, path)
         
         print(json.dumps(dir_structure, indent=4))
@@ -114,6 +131,51 @@ def check_user():
             "message": e.__str__()
         }, 500
 
+
+@app.route('/createFolder', methods=["POST"])
+def create_folder():
+    try:
+        request_body = request.json
+        location = request_body["location"]
+        folder_name = request_body["folder_name"]
+        print("Validating request body")
+        validate_request_body(request_body)
+        print("Request body validation successful.")
+        print("Creating folder at location : {} with folder_name : {}".format(location, folder_name))
+        
+        os.mkdir("{}/{}".format(location, folder_name))
+        print("Folder created successcully at location: {}".format(location))
+
+        response = {
+            "status": "Success",
+            "message": "Directory created successfully"
+        } 
+        return response, 200
+
+    except KeyError as key:
+        msg = "Key {} is missing from request body".format(key)
+        print(msg)
+        return {
+                "status": "BAD REQUEST",
+                "message": msg
+            }, 400
+    except CustomException as e:
+        print(e.msg)
+        print(traceback.format_exc())
+        return {
+                "status": "BAD REQUEST",
+                "message": e.msg
+            }, 400
+   
+    except Exception as e:
+        print(e)
+        print(traceback.format_exc())
+
+        return {
+            "status": "INTERNAL SERVER ERROR",
+            "message": e.__str__()
+        }, 500
+    
 
 # main driver function
 if __name__ == '__main__':
