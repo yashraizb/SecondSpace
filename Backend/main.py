@@ -148,11 +148,12 @@ def create_folder():
         path = "../UserStorage/{}".format(user_no)
         location = "../UserStorage/" + location
 
-        create_dir_structure(dir_structure, path)
         print("Request body validation successful.")
         print("Creating folder at location : {} with folder_name : {}".format(location, folder_name))
         
         os.mkdir("{}/{}".format(location, folder_name))
+        create_dir_structure(dir_structure, path)
+
         print("Folder created successcully at location: {}".format(location))
 
         response = {
