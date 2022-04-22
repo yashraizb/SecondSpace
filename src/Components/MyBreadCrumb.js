@@ -3,7 +3,7 @@ import Breadcrumb from "react-bootstrap/Breadcrumb";
 
 export default function MyBreadCrumb(props) {
   var lengthOfCrumb = props.path.length;
-  console.log("length of crumb array : ", lengthOfCrumb);
+  // console.log("length of crumb array : ", lengthOfCrumb);
   props.path[0] = "Home";
 
   return (
