@@ -1,5 +1,5 @@
-const reducer = (state="no_home", action) => {
-    if(action.type === "updateDirectory") {
+const reducer = (state={}, action) => {
+    if(action.type === "setDirectoryStructure") {
         state = action.payload
         return state
     } else {

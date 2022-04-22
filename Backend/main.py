@@ -139,7 +139,9 @@ def create_folder():
         location = request_body["location"]
         folder_name = request_body["folder_name"]
         print("Validating request body")
+        dir_structure = {}
         validate_request_body(request_body)
+        create_dir_structure(dir_structure, )
         print("Request body validation successful.")
         print("Creating folder at location : {} with folder_name : {}".format(location, folder_name))
         

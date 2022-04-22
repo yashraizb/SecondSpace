@@ -1,29 +1,41 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "redux";
+import { actionCreators } from "../state";
 import FileTable from "./FileTable";
 
 export default function Landing() {
   const [user_no, setUserNo] = useState("");
-  const [dirStructure, setDirStruc] = useState({});
+  const directoryStructure = useSelector(state => state.directoryStructure)
   const [errMsg, setErrMsg] = useState("");
   const [apiStatus, setApiStattus] = useState("");
 
+  const dispatch = useDispatch();
+  const actions = bindActionCreators(actionCreators, dispatch);
+
+  console.log("landing directoryStructure: ", directoryStructure)
+
+  const [user_id, setUserId] = useState("");
+
 
   const handleClick = () => {
+    console.log("user_id: ", user_id)
+    setUserNo(user_id)
+    console.log(user_no)
     fetch("/checkUser", {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ user_no: user_no }),
+      body: JSON.stringify({ user_no: user_id }),
     })
       .then((res) => {
         res.json().then((data) => {
           // console.log(data);
           setApiStattus(data.status);
           if (data.status === "SUCCESS") {
-            setDirStruc({});
-            setDirStruc(data.dir_structure);
+            actions.setDirectoryStructure(data.dir_structure)
           } else {
             setErrMsg(data.message);
           }
@@ -34,8 +46,8 @@ export default function Landing() {
 
   const handleChange = (event) => {
     let nameValue = event.target.value;
-    setUserNo(nameValue);
-    console.log("No value is : " + nameValue);
+    setUserId(nameValue)
+    console.log("No value is : " + nameValue, user_id);
   };  
 
   return (
@@ -55,7 +67,7 @@ export default function Landing() {
         </button>
       </div>
       
-      {Object.keys(dirStructure).length === 0 ? (
+      {Object.keys(directoryStructure).length === 0 ? (
         apiStatus !== "SUCCESS" ? (
           apiStatus === "" ? (
             <></>
@@ -69,7 +81,7 @@ export default function Landing() {
         <div className="container mt-4 bg-danger p-2" align="center" style={{color: "white"}}>{errMsg}</div>
       ) : (
         
-        <FileTable data={dirStructure} homeDirectory={user_no}/>
+        <FileTable homeDirectory={user_no}/>
       )}
 
     </>
