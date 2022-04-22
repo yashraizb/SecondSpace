@@ -1,5 +1,6 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
+from importlib.resources import path
 import os
 from pathlib import Path
 from flask import Flask, jsonify, request
@@ -115,8 +116,9 @@ def check_user():
         
         # Path(path).mkdir(exist_ok=True, parents=True)
         create_dir_structure(dir_structure, path)
+        print("path: {}".format(path))
         
-        print(json.dumps(dir_structure, indent=4))
+        # print(json.dumps(dir_structure, indent=4))
 
         return {
             "status": "SUCCESS",
@@ -136,11 +138,17 @@ def create_folder():
     try:
         request_body = request.json
         location = request_body["location"]
+        print("location: {}".format(location))
         folder_name = request_body["folder_name"]
         print("Validating request body")
         dir_structure = {}
         validate_request_body(request_body)
-        create_dir_structure(dir_structure, )
+        
+        user_no = location.split("/")[0]
+        path = "../UserStorage/{}".format(user_no)
+        location = "../UserStorage/" + location
+
+        create_dir_structure(dir_structure, path)
         print("Request body validation successful.")
         print("Creating folder at location : {} with folder_name : {}".format(location, folder_name))
         
@@ -149,7 +157,8 @@ def create_folder():
 
         response = {
             "status": "Success",
-            "message": "Directory created successfully"
+            "message": "Directory created successfully",
+            "dir_structure": dir_structure
         } 
         return response, 200
 
