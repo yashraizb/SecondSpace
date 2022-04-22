@@ -1,6 +1,5 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
-from logging import exception
 import os
 from pathlib import Path
 from flask import Flask, jsonify, request
